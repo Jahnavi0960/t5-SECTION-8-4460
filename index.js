@@ -2,8 +2,9 @@
 const express = require('express');
 const app = express();
 
-// Middleware to parse JSON
+// Middleware to parse JSON and serve static files
 app.use(express.json());
+app.use(express.static('public')); // serves index.html
 
 // --- Sample Data ---
 let books = [
@@ -18,6 +19,11 @@ let users = [
 ];
 
 // --- ROUTES ---
+
+// ✅ Default Home Route
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
 
 // ✅ PART A: ROUTING BASICS
 
@@ -59,7 +65,7 @@ app.delete('/api/users/:userId', (req, res) => {
 });
 
 // 3️⃣ Borrow and return books
-// Borrow
+// Borrow a book
 app.post('/api/borrow', (req, res) => {
   const { userId, bookId } = req.body;
   const user = users.find(u => u.id == userId);
@@ -74,7 +80,7 @@ app.post('/api/borrow', (req, res) => {
   res.json({ message: `${user.name} borrowed "${book.title}"` });
 });
 
-// Return
+// Return a book
 app.post('/api/return', (req, res) => {
   const { userId, bookId } = req.body;
   const user = users.find(u => u.id == userId);
@@ -115,5 +121,5 @@ app.get('/api/users/:userId/borrow-history', (req, res) => {
 // --- Start Server ---
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Library API running on http://localhost:${PORT}`);
+  console.log(`✅ Library API running on http://localhost:${PORT}`);
 });
